@@ -1,0 +1,133 @@
+<?php
+require("inc/essential.php");
+require("inc/dbconfig.php");
+admin_login();
+
+if (isset($_GET['seen'])) {
+    $frm_data = filteration($_GET);
+
+    if ($frm_data['seen'] == 'all') {
+        $q = "UPDATE `user_queries` SET `seen`=?";
+        $values = [1];
+        if (update($q, $values, 'i')) {
+            alert('success', 'All Marked as read!');
+        } else {
+            alert('error', 'Operation failed!');
+        }
+    } else {
+        $q = "UPDATE `user_queries` SET `seen`=? WHERE srno = ?";
+        $values = [1, $frm_data['seen']];
+        if (update($q, $values, 'ii')) {
+            alert('success', 'Marked as read!');
+        } else {
+            alert('error', 'Operation failed!');
+        }
+    }
+}
+
+if (isset($_GET['del'])) {
+    $frm_data = filteration($_GET);
+
+    if ($frm_data['del'] == 'all') {
+        $q = "DELETE FROM `user_queries`";
+        if (mysqli_query($con, $q)) {
+            alert('success', 'All Data Deleted!');
+        } else {
+            alert('error', 'Operation failed!');
+        }
+    } else {
+        $q = "DELETE FROM `user_queries` WHERE srno = ?";
+        $values = [$frm_data['del']];
+        if (delete($q, $values, 'i')) {
+            alert('success', 'Data Deleted!');
+        } else {
+            alert('error', 'Operation failed!');
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN PANEL - user_queries</title>
+    <?php require("inc/links.php"); ?>
+</head>
+
+<body class="bg-light">
+    <?php require('inc/header.php') ?>
+
+    <div class="container-fluid" id="main-content">
+        <div class="row">
+            <div class="col-lg-10 ms-auto p-4 overflow-hiddeb">
+                <h3 class="mb-4">USER QUERIES</h3>
+
+                <!-- CAROUSALS SECTION  -->
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+
+                        <div class="text-end mb-4">
+                            <a href="?seen=all" class="btn btn-dark rounded-pill btn-sm shadow-none">
+                                <i class="bi bi-check-all"></i> Mark all as read
+                            </a>
+                            <a href="?del=all" class="btn btn-danger rounded-pill btn-sm shadow-none">
+                                <i class="bi bi-trash"></i> Delete All
+                            </a>
+                        </div>
+                        <div class="table-responsive-md" style="height:450px; overflow-y:scroll;">
+                            <table class="table table-hover border bg-dark">
+                                <thead class="sticky-top">
+                                    <tr class="bg-dark">
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th width="20%">Subject</th>
+                                        <th width="25%">Message</th>
+                                        <th>Date</th>
+                                        <th width="10%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $q = "SELECT * FROM `user_queries` ORDER BY `srno` DESC";
+                                    $data = mysqli_query($con, $q);
+                                    $i = 1;
+
+                                    while ($row = mysqli_fetch_assoc($data)) {
+                                        $seen = '';
+                                        if ($row['seen'] != 1) {
+                                            $seen = "<a href='?seen=$row[srno]' class = 'btn btn-sm rounded-pill btn-primary'>Mark as read</a>";
+                                        }
+                                        $seen .= "<a href='?del=$row[srno]' class = 'btn btn-sm rounded-pill btn-danger mt-2'>Delete</a>";
+                                        echo <<<q
+                                            <tr>
+                                                <td>$i</td>
+                                                <td>$row[name]</td>
+                                                <td>$row[email]</td>
+                                                <td>$row[subject]</td>
+                                                <td>$row[message]</td>
+                                                <td>$row[date]</td>
+                                                <td>$seen</td>
+                                            </tr>  
+                                            q;
+                                        $i++;
+                                    }
+                                    ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <?php require("inc/scripts.php"); ?>
+</body>
+
+</html>

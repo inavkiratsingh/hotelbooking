@@ -1,0 +1,43 @@
+:root{
+    --maincolor: #2ec1ac;
+    --main_hover: #279e8c;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.h-font {
+
+    font-family: 'Merienda', cursive;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.custom-alert{
+    position: fixed;
+    top: 80px;
+    right: 25px;
+    z-index: 10000;
+}
+
+.custom-bg {
+    background: var(--maincolor);
+}
+
+.custom-bg:hover {
+    background: var(--main_hover);
+}
+
+
+/* facilities page  */
+.h-line{
+    width: 150px;
+    margin: 0 auto;
+    height: 1.7px;
+}
